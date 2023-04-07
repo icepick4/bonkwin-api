@@ -17,19 +17,24 @@ annonceRouter.post('/:id', (req: Request, res: Response) => {
     }
 });
 
-annonceRouter.get('/:id', (req: Request, res: Response) => {
-    const annonceId: number = parseInt(req.params.id);
-    const annonce: Annonce | undefined = annonces.find(
-        (a) => a.id === annonceId
-    );
+annonceRouter.get('/:userId', (req: Request, res: Response) => {
+    const userId: number = parseInt(req.params.userId);
+    console.log(userId);
+    console.log(annonces);
+    const userAnnonces: Annonce[] = annonces.filter((a) => a.userId === userId);
 
-    if (annonce !== undefined) {
-        res.status(200).json(annonce);
+    if (userAnnonces.length > 0) {
+        res.status(200).json(userAnnonces);
     } else {
         res.status(404).json({
-            message: 'Annonce not found'
+            message: 'No annonce found'
         });
     }
+});
+
+annonceRouter.get('/new/id', (req: Request, res: Response) => {
+    const newId = annonces.length + 1;
+    res.status(200).json(newId);
 });
 
 annonceRouter.delete('/:id', (req: Request, res: Response) => {
