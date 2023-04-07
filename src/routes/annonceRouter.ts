@@ -17,6 +17,31 @@ annonceRouter.post('/:id', (req: Request, res: Response) => {
     }
 });
 
+annonceRouter.post('/:id/commentaire', (req: Request, res: Response) => {
+    const annonceId: number = parseInt(req.params.id);
+    const annonce: Annonce | undefined = annonces.find(
+        (a) => a.id === annonceId
+    );
+
+    if (annonce !== undefined) {
+        annonce.commentaires.push(req.body);
+        res.status(201).json(annonce);
+    } else {
+        res.status(404).json({
+            message: 'Annonce not found'
+        });
+    }
+});
+
+annonceRouter.post('/new', (req: Request, res: Response) => {
+    const newAnnonce = req.body;
+
+    if (newAnnonce) {
+        annonces.push(newAnnonce);
+        res.status(201).json(newAnnonce);
+    }
+});
+
 annonceRouter.get('/:userId', (req: Request, res: Response) => {
     const userId: number = parseInt(req.params.userId);
     console.log(userId);
@@ -32,6 +57,34 @@ annonceRouter.get('/:userId', (req: Request, res: Response) => {
     }
 });
 
+annonceRouter.get('/content/:id', (req: Request, res: Response) => {
+    const annonceId: number = parseInt(req.params.id);
+    const annonce: Annonce | undefined = annonces.find(
+        (a) => a.id === annonceId
+    );
+    if (annonce !== undefined) {
+        res.status(200).json(annonce);
+    } else {
+        res.status(404).json({
+            message: 'Annonce not found'
+        });
+    }
+});
+
+annonceRouter.get('/single/:id', (req: Request, res: Response) => {
+    const annonceId: number = parseInt(req.params.id);
+    const annonce: Annonce | undefined = annonces.find(
+        (a) => a.id === annonceId
+    );
+    if (annonce !== undefined) {
+        res.status(200).json(annonce);
+    } else {
+        res.status(404).json({
+            message: 'Annonce not found'
+        });
+    }
+});
+
 annonceRouter.get('/new/id', (req: Request, res: Response) => {
     const newId = annonces.length + 1;
     res.status(200).json(newId);
@@ -42,17 +95,12 @@ annonceRouter.delete('/:id', (req: Request, res: Response) => {
     const annonce: Annonce | undefined = annonces.find(
         (a) => a.id === annonceId
     );
-    const userId = req.body.userId;
+
+    console.log(annonce);
 
     if (annonce !== undefined) {
-        if (annonce.userId === userId) {
-            annonces.splice(annonces.indexOf(annonce), 1);
-            res.status(200).json(annonce);
-        } else {
-            res.status(401).json({
-                message: 'Unauthorized'
-            });
-        }
+        annonces.splice(annonces.indexOf(annonce), 1);
+        res.status(200).json(annonce);
     } else {
         res.status(404).json({
             message: 'Annonce not found'
